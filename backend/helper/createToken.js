@@ -1,7 +1,8 @@
 import jwt from "jsonwebtoken";
 
 const maxAge = 3 * 24 * 60 * 60;
-const JWT_SECRET = process.env.JWT_SECRET || "secretkey";
 export const createToken = (_id) => {
-  return jwt.sign({ _id }, JWT_SECRET, { expiresIn: maxAge });
+  const secret = process.env.JWT_SECRET;
+  if (!secret) throw new Error("JWT secret not configured");
+  return jwt.sign({ _id }, secret, { expiresIn: maxAge });
 };

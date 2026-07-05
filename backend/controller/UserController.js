@@ -6,6 +6,13 @@ const UserController = {
     try {
       const { name, email, password } = req.body;
       let user = await User.register({ name, email, password });
+      if (!process.env.JWT_SECRET) {
+        await User.deleteOne({ _id: user._id });
+        console.error("JWT secret is not configured. Aborting registration.");
+        return res
+          .status(500)
+          .json({ message: "JWT secret is not configured" });
+      }
       let token = createToken(user._id);
       res.cookie("jwt", token, {
         httpOnly: true,
@@ -39,7 +46,10 @@ const UserController = {
     }
   },
   logout: (req, res) => {
-    res.send("Logout route");
+    res.cookie("jwt", "", {
+      maxAge: 1,
+    });
+    return res.json({ message: "token not available" });
   },
 };
 export default UserController;

@@ -3,8 +3,8 @@ import { useState } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Logout from "./pages/Logout";
 import ForgotPassword from "./pages/ForgotPassword";
+import UserPage from "./pages/userPage";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -12,14 +12,23 @@ function App() {
 
   const handleLogin = (u) => setUser(u);
   const handleRegister = (u) => setUser(u);
-  const handleLogout = () => setUser(null);
+  const handleLogout = () => {
+    setUser(null);
+    navigate("/login", { replace: true });
+  };
 
   return (
     <main className="app-shell">
       <Routes>
         <Route
           path="/"
-          element={user ? <Navigate to="/logout" /> : <Navigate to="/login" />}
+          element={
+            user ? (
+              <Navigate to="/user" replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
         />
         <Route
           path="/login"
@@ -44,9 +53,10 @@ function App() {
           path="/forgot"
           element={<ForgotPassword onBack={() => navigate("/login")} />}
         />
+        <Route path="/user" element={<UserPage onLogout={handleLogout} />} />
         <Route
-          path="/logout"
-          element={<Logout user={user} onLogout={handleLogout} />}
+          path="/userPage"
+          element={<UserPage onLogout={handleLogout} />}
         />
       </Routes>
     </main>

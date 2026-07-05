@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "../Helpers/axios";
+import { useNavigate } from "react-router-dom";
 export default function Login({
   onLogin,
   onSwitchToRegister,
@@ -8,6 +9,7 @@ export default function Login({
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
   let [fieldErrors, setFieldErrors] = useState({});
+  let navigate = useNavigate();
 
   let login = async (e) => {
     try {
@@ -20,15 +22,15 @@ export default function Login({
         withCredentials: true,
       });
 
-      if (res.status === 201) {
+      if (res?.data?.user) {
         onLogin(res.data.user);
+        navigate("/user", { replace: true });
       }
     } catch (err) {
       console.log(err);
-      // inside catch(err) { ... }
       if (err.response) {
         const body = err.response.data || {};
-        // If express-validator array form
+
         if (Array.isArray(body.errors)) {
           const map = {};
           body.errors.forEach((it) => {
