@@ -51,5 +51,29 @@ const UserController = {
     });
     return res.json({ message: "token not available" });
   },
+  forgotPassword: async (req, res) => {
+    const { email } = req.body;
+    try {
+      const token = await User.forgotPassword({ email });
+      const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+      const resetLink = `${frontendUrl}/reset-password?token=${token}`;
+      res.status(200).json({ message: "Reset link created", resetLink });
+    } catch (error) {
+      console.error("Forgot password error:", error);
+      const status = error.message === "user not exists" ? 400 : 500;
+      res.status(status).json({ message: error.message || "Server error" });
+    }
+  },
+  resetPassword: async (req, res) => {
+    const { token, newPassword } = req.body;
+    try {
+      await User.resetPassword({ token, newPassword });
+      res.status(200).json({ message: "Password reset successful" });
+    } catch (error) {
+      console.error("Reset password error:", error);
+      const status = error.message === "invalid or expired token" ? 400 : 500;
+      res.status(status).json({ message: error.message || "Server error" });
+    }
+  },
 };
 export default UserController;

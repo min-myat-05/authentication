@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import UserPage from "./pages/userPage";
+import ResetPass from "./pages/reset-pass";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -58,6 +59,7 @@ function App() {
           path="/userPage"
           element={<UserPage onLogout={handleLogout} />}
         />
+        <Route path="/reset-password" element={<ResetPass />} />
       </Routes>
     </main>
   );
